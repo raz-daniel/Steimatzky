@@ -1,84 +1,87 @@
 import { ChangeEvent, useEffect, useState } from 'react'
 import './List.css'
-import Category from '../../../models/category/Category'
-import categoriesServices from '../../../services/categories'
 import Card from '../card/Card'
-import Store from '../../../models/store/Store'
-import storesServices from '../../../services/stores'
 import { useLocation, useSearchParams } from 'react-router-dom'
+import Genre from '../../../models/genre/Genre'
+import Book from '../../../models/book/Book'
+import genresServices from '../../../services/genres'
+import booksServices from '../../../services/books'
 
 export default function List(): JSX.Element {
 
-    const [categories, setCategories] = useState<Category[]>([])
-    const [stores, setStores] = useState<Store[]>([])
+    const [genres, setGenres] = useState<Genre[]>([])
+    const [books, setBooks] = useState<Book[]>([])
     const location = useLocation()
-    const newStoreId = location.state?.newStoreId
+    const newBookId = location.state?.newBookId
     const [searchParams] = useSearchParams();
     const searchTerm = searchParams.get('search') || '';
 
     useEffect(() => {
         (async () => {
             try {
-                const categories = await categoriesServices.getCategories()
-                setCategories(categories)
+                const genres = await genresServices.getGenres()
+                setGenres(genres)
 
-                const allStores = await storesServices.getAllStores();
+                const allBooks = await booksServices.getAllBooks()
 
                 if (searchTerm) {
-                    const filteredStores = allStores.filter(s =>
-                        s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        s.address.toLowerCase().includes(searchTerm.toLowerCase())
+                    const filteredBooks = allBooks.filter(book =>
+                        book.name.toLowerCase().includes(searchTerm.toLowerCase())
                     )
-                    setStores(filteredStores)
+                    setBooks(filteredBooks)
                 } else {
-                    setStores(allStores);
+                    setBooks(allBooks);
                 }
             } catch (error) {
                 alert(error)
             }
-
         })()
     }, [searchTerm])
 
-    async function categoryChanged(event: ChangeEvent<HTMLSelectElement>) {
+    async function genreChanged(event: ChangeEvent<HTMLSelectElement>) {
         try {
-            const selectedCategoryId = event.currentTarget.value
+            const selectedGenreId = event.currentTarget.value
+            const books = await booksServices.getBooksPerGenre(selectedGenreId) || ''
 
+            if (selectedGenreId) {
+                const selectedGenre = genres.find(genre => genre.id === selectedGenreId)
+                if (selectedGenre) {
+                    const booksWithGenre = books.map(book => ({
+                        ...book,
+                        genre: selectedGenre
+                    }))
 
-            const stores = await storesServices.getStoresPerCategory(selectedCategoryId)
-            setStores(stores)
-
+                    setBooks(booksWithGenre as Book[])
+                } else {
+                    setBooks(books)
+                }
+            } else {
+                setBooks(books)
+            }
         } catch (error) {
             alert(error)
         }
-
     }
 
-    function removeStore(id: string) {
-        setStores(stores.filter(s => s.id !== id))
-    }
-
-    function categoryName(categoryId: string): string {
-        const foundName = categories.find(c => c.id === categoryId)
-        return !foundName ? 'unknown' : foundName.name
+    function removeBook(id: string) {
+        setBooks(books.filter(book => book.id !== id))
     }
 
     return (
         <div className='List'>
 
-            <select onChange={categoryChanged} defaultValue="">
-                <option value="" selected>All Stores</option>
-                {categories.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
+            <select onChange={genreChanged} defaultValue="">
+                <option value="">Show All</option>
+                {genres.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
             </select>
 
             <div className='CardContainer'>
-                {stores.map(store =>
+                {books.map(book =>
                     <Card
-                        key={store.id}
-                        categoryName={categoryName(store.categoryId)}
-                        store={store}
-                        removeStore={removeStore}
-                        isNew={store.id === newStoreId}
+                        key={book.id}
+                        book={book}
+                        removeBook={removeBook}
+                        isNew={book.id === newBookId}
                     />
                 )}
             </div>

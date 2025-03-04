@@ -1,5 +1,5 @@
-import { NavLink, useNavigate } from 'react-router-dom'
 import './Header.css'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 
 export default function Header(): JSX.Element {
@@ -9,7 +9,7 @@ export default function Header(): JSX.Element {
 
     function handleSearch() {
         if (searchTerm.trim()) {
-            navigate(`/stores/list?search=${searchTerm}`)
+            navigate(`/books/list?search=${searchTerm}`)
         }
     }
 
@@ -18,9 +18,9 @@ export default function Header(): JSX.Element {
 
             <div>
                 <nav>
-                    <NavLink to="stores/list">Our Stores</NavLink>
-                    <NavLink to="stores/add">Add Store</NavLink>
-                    <NavLink to="stores/home">Home</NavLink>
+                    <NavLink to="books/list">Books</NavLink>
+                    <NavLink to="books/add">Add Book</NavLink>
+                    <NavLink to="/home">Home</NavLink>
                 </nav>
             </div>
             <div>
@@ -29,7 +29,7 @@ export default function Header(): JSX.Element {
                     handleSearch()
                 }}>
                     <input
-                        placeholder='search...'
+                        placeholder='search a book...'
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />

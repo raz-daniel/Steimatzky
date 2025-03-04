@@ -1,19 +1,18 @@
 import { useEffect, useState } from 'react'
-import Store from '../../../models/store/Store'
-import storesServices from '../../../services/stores'
 import './Card.css'
+import Book from '../../../models/book/Book'
+import booksServices from '../../../services/books'
 
 interface CardProps {
-    store: Store
-    categoryName: string
-    removeStore(id: string): void
+    book: Book
+    removeBook(id: string): void
     isNew?: boolean
 }
 
 export default function Card(props: CardProps): JSX.Element {
 
-    const { id, name, address } = props.store
-    const { categoryName, isNew } = props
+    const { id, name, summary, price, stock, genre } = props.book
+    const { isNew } = props
     const [highlight, setHighlight] = useState(isNew || false)
 
     useEffect(() => {
@@ -28,8 +27,8 @@ export default function Card(props: CardProps): JSX.Element {
 
     async function deleteMe() {
         try {
-            await storesServices.remove(id)
-            props.removeStore(id)
+            await booksServices.remove(id)
+            props.removeBook(id)
         } catch (error) {
             alert(error)
         }
@@ -38,8 +37,10 @@ export default function Card(props: CardProps): JSX.Element {
     return (
         <div className={`Card ${highlight ? 'highlight' : ''}`}>
             <h4>{name}</h4>
-            <p>{address}</p>
-            <p>{categoryName}</p>
+            <p>{summary}</p>
+            <p>{genre.name}</p>
+            <p>Price: ${price}</p>
+            <p>Stock: {stock}</p>
             <div>
                 <button onClick={deleteMe}>delete</button>
             </div>

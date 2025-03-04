@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react'
-import Category from '../../../models/category/Category'
 import './Add.css'
-import categoriesServices from '../../../services/categories'
 import { useForm } from 'react-hook-form'
-import Draft from '../../../models/store/Draft'
+import Draft from '../../../models/book/Draft'
 import { useNavigate } from 'react-router-dom'
-import storesServices from '../../../services/stores'
+import Genre from '../../../models/genre/Genre'
+import genresServices from '../../../services/genres'
+import booksServices from '../../../services/books'
 
 export default function Add(): JSX.Element {
-    const [categories, setCategories] = useState<Category[]>([])
+    const [genres, setGenres] = useState<Genre[]>([])
     useEffect(() => {
         (async () => {
             try {
-                const categories = await categoriesServices.getCategories()
-                setCategories(categories)
+                const genres = await genresServices.getGenres()
+                setGenres(genres)
             } catch (error) {
                 alert(error)
             }
@@ -27,9 +27,9 @@ export default function Add(): JSX.Element {
 
     async function submit(draft: Draft) {
         try {
-            const newStore = await storesServices.add(draft)
-            alert('Added Store')
-            navigate('/stores/list', { state: { newStoreId: newStore.id } })
+            const newBook = await booksServices.add(draft)
+            alert('Added Book')
+            navigate('/books/list', { state: { newBookId: newBook.id } })
         } catch (error) {
             alert(error)
         }
@@ -37,7 +37,7 @@ export default function Add(): JSX.Element {
     return (
         <div className='Add'>
             <form onSubmit={handleSubmit(submit)}>
-                <input placeholder='store name' {...register('name', {
+                <input placeholder='book name' {...register('name', {
                     required: {
                         value: true,
                         message: 'must enter name'
@@ -46,26 +46,54 @@ export default function Add(): JSX.Element {
                 <span className='error'>{formState.errors.name?.message}</span>
                 
 
-                <input placeholder='address' {...register('address', {
+                <input placeholder='summary' {...register('summary', {
                     required: {
                         value: true,
-                        message: 'must enter address'
+                        message: 'must enter summary'
+                    },
+                    minLength: {
+                        value: 10,
+                        message: 'must enter at least 10 letters'
                     }
                 })}/>
-                <span className='error'>{formState.errors.address?.message}</span>
+                <span className='error'>{formState.errors.summary?.message}</span>
 
-                <select defaultValue={''}{...register('categoryId', {
+                <select defaultValue={''}{...register('genreId', {
                     required: {
                         value: true,
-                        message: 'must enter categoryId'
+                        message: 'must choose genre'
                     }
                 })}>
-                    <option value="" disabled selected>Please select category...</option>
-                    {categories.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
+                    <option value="" disabled selected>Please select genre...</option>
+                    {genres.map(({ id, name }) => <option key={id} value={id}>{name}</option>)}
                 </select>
-                <span className='error'>{formState.errors.categoryId?.message}</span>
+                <span className='error'>{formState.errors.genreId?.message}</span>
 
-                <button>Add Store</button>
+                <input placeholder='price' {...register('price', {
+                    required: {
+                        value: true,
+                        message: 'must enter price'
+                    },
+                    min: {
+                        value: 0,
+                        message: 'price must be positive'
+                    }
+                })}/>
+                <span className='error'>{formState.errors.price?.message}</span>
+
+                <input placeholder='stock' {...register('stock', {
+                    required: {
+                        value: true,
+                        message: 'must enter stock'
+                    },
+                    min: {
+                        value: 0,
+                        message: 'stock must be positive'
+                    }
+                })}/>
+                <span className='error'>{formState.errors.stock?.message}</span>
+
+                <button>Add Book</button>
 
             </form>
         </div>
