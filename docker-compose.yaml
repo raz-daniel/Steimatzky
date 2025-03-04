@@ -3,7 +3,7 @@ version: '3.8'
 services:
 
   backend:
-    container_name: store-backend
+    container_name: steimatzky-backend
     ports:
      - 3000:3000
     environment:
@@ -15,16 +15,16 @@ services:
 
 
   frontend:
-    container_name: store-frontend
+    container_name: steimatzky-frontend
     ports:
       - 5173:80
     build: ./frontend
 
   database:
-    container_name: store-database
+    container_name: steimatzky-database
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=1
-      - MYSQL_DATABASE=twitter
+      - MYSQL_DATABASE=steimatzky
       - MYSQL_TCP_PORT=3306
     ports: 
       - 3306:3306

@@ -1,14 +1,14 @@
 {
     "app": {
         "port": "3000",
-        "name": "ShopsLocation"
+        "name": "Steimatzky"
     },
     "db": {
         "host": "localhost",
         "port": 3306,
         "username": "root",
         "password": "",
-        "database": "ShopsDB"
+        "database": "steimatzky"
     },
     "sequelize": {
         "logging": true,

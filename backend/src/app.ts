@@ -4,14 +4,13 @@ import sequelize from "./db/sequelize"
 import errorLogger from "./middlewares/error/error-logger"
 import errorResponder from "./middlewares/error/error-responder"
 import notFound from "./middlewares/not-found"
-
 import cors from 'cors'
-import categoriesRouter from "./routers/categoriesRouter"
-import storesRouter from "./routers/storesRouter"
+import genresRouter from "./routers/genresRouter"
+import booksRouter from "./routers/booksRouter"
 
 const port = config.get<string>('app.port')
 const name = config.get<string>('app.name')
-const force = config.get<boolean>('sequelize.sync.force')
+
 
 
 const app = express();
@@ -26,8 +25,8 @@ const app = express();
     
         app.use(json())
 
-        app.use('/categories', categoriesRouter)
-        app.use('/stores', storesRouter)
+        app.use('/genres', genresRouter)
+        app.use('/books', booksRouter)
 
     
         app.use(notFound)
