@@ -41,23 +41,23 @@ export default function List(): JSX.Element {
     async function genreChanged(event: ChangeEvent<HTMLSelectElement>) {
         try {
             const selectedGenreId = event.currentTarget.value
-            const books = await booksServices.getBooksPerGenre(selectedGenreId) || ''
+            const books = await booksServices.getBooksPerGenre(selectedGenreId)
 
-            if (selectedGenreId) {
-                const selectedGenre = genres.find(genre => genre.id === selectedGenreId)
-                if (selectedGenre) {
-                    const booksWithGenre = books.map(book => ({
-                        ...book,
-                        genre: selectedGenre
-                    }))
+            // if (selectedGenreId) {
+            //     const selectedGenre = genres.find(genre => genre.id === selectedGenreId)
+            //     if (selectedGenre) {
+            //         const booksWithGenre = books.map(book => ({
+            //             ...book,
+            //             genre: selectedGenre
+            //         }))
 
-                    setBooks(booksWithGenre as Book[])
-                } else {
-                    setBooks(books)
-                }
-            } else {
+            //         setBooks(booksWithGenre as Book[])
+            //     } else {
+            //         setBooks(books)
+            //     }
+            // } else {
                 setBooks(books)
-            }
+            // }
         } catch (error) {
             alert(error)
         }
@@ -76,12 +76,12 @@ export default function List(): JSX.Element {
             </select>
 
             <div className='CardContainer'>
-                {books.map(book =>
+                {books.map(b =>
                     <Card
-                        key={book.id}
-                        book={book}
+                        key={b.id}
+                        book={b}
                         removeBook={removeBook}
-                        isNew={book.id === newBookId}
+                        isNew={b.id === newBookId}
                     />
                 )}
             </div>

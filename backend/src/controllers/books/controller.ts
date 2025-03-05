@@ -6,10 +6,7 @@ import Genre from "../../model/genre";
 export async function getAllBooks(req: Request, res: Response, next: NextFunction) {
     try {
         const books = await Book.findAll({
-            include: [{
-                model: Genre,
-                attributes: ['id', 'name']
-            }]
+            include: [ Genre ]
         }) 
         res.json(books)
     } catch (error) {
@@ -20,10 +17,11 @@ export async function getAllBooks(req: Request, res: Response, next: NextFunctio
 export async function getBooksPerGenre(req: Request<{ genreId: string }>, res: Response, next: NextFunction) {
     try {
         const { genreId } = req.params
-        const genre = await Genre.findByPk(genreId, {
-            include: [Book]
+        const book = await Book.findAll({
+            where: {genreId},
+            include: [Genre]
         })
-        res.json(genre.book)
+        res.json(book)
     } catch (error) {
         next(error)
     }
